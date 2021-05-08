@@ -14,8 +14,8 @@
  *
  */
 
-#ifndef COM_SAXBOPHONE_TR_SORT_COMMON_HPP
-#define COM_SAXBOPHONE_TR_SORT_COMMON_HPP
+#ifndef COM_SAXBOPHONE_TR_SORT_HPP
+#define COM_SAXBOPHONE_TR_SORT_HPP
 
 
 namespace com::saxbophone::tr_sort {

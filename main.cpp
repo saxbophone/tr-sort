@@ -1,3 +1,3 @@
-#include <tr-sort/common.hpp>
+#include <tr-sort.hpp>
 
 int main() {}

@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 
-#include <tr-sort/common.hpp>
+#include <tr-sort.hpp>
 
 using namespace com::saxbophone::tr_sort;
 // dummy code

@@ -9,7 +9,7 @@
  *
  */
 
-#include <tr-sort/common.hpp>
+#include <tr-sort.hpp>
 
 
 namespace com::saxbophone::tr_sort {
