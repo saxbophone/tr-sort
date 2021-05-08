@@ -19,6 +19,9 @@
 
 
 namespace com::saxbophone::tr_sort {
+    /**
+     * @returns Whether library works or not
+     */
     bool library_works();
 }
 
