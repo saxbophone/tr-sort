@@ -6,13 +6,13 @@ CPMFindPackage(
 )
 
 add_executable(tests)
-target_sources(tests PRIVATE main.cpp example.cpp)
+target_sources(tests PRIVATE main.cpp common.cpp)
 target_link_libraries(
     tests
     PRIVATE
-        project-compiler-options  # tests use same compiler options as main project
-        project
-        Catch2::Catch2             # unit testing framework
+        tr-sort-compiler-options  # tests use same compiler options as main project
+        tr-sort
+        Catch2::Catch2                         # unit testing framework
 )
 
 enable_testing()

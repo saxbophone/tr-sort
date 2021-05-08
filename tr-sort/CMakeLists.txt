@@ -1,50 +1,50 @@
 include(GNUInstallDirs)
 
-add_library(project STATIC)
+add_library(tr-sort STATIC)
 # ALIAS target to export a namespaced target even when building in-tree
-add_library(Project::project ALIAS project)
+add_library(TrSort::tr-sort ALIAS tr-sort)
 # add source files
 add_subdirectory(src)
 # library public header files location
 target_include_directories(
-    project PUBLIC
+    tr-sort PUBLIC
     # different include directory path depending on if using the local or installed version of library
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
-# pass in version of project as preprocessor definitions
+# pass in version of tr-sort as preprocessor definitions
 target_compile_definitions(
-    project PRIVATE
+    tr-sort PRIVATE
     -DPROJECT_VERSION_MAJOR=${PROJECT_VERSION_MAJOR}
     -DPROJECT_VERSION_MINOR=${PROJECT_VERSION_MINOR}
     -DPROJECT_VERSION_PATCH=${PROJECT_VERSION_PATCH}
-    -DPROJECT_VERSION_STRING=${PROJECT_ESCAPED_VERSION_STRING}
+    -DPROJECT_VERSION_STRING=${TR_SORT_ESCAPED_VERSION_STRING}
 )
 # set up version and soversion for the main library object
 set_target_properties(
-    project PROPERTIES
-    VERSION ${PROJECT_VERSION_STRING}
+    tr-sort PROPERTIES
+    VERSION ${TR_SORT_VERSION_STRING}
     SOVERSION ${PROJECT_VERSION_MAJOR}
-    INTERFACE_Project_MAJOR_VERSION ${PROJECT_VERSION_MAJOR}
-    INTERFACE_Project_MINOR_VERSION ${PROJECT_VERSION_MINOR}
+    INTERFACE_TrSort_MAJOR_VERSION ${PROJECT_VERSION_MAJOR}
+    INTERFACE_TrSort_MINOR_VERSION ${PROJECT_VERSION_MINOR}
 )
 set_property(
-    TARGET project
-    APPEND PROPERTY COMPATIBLE_INTERFACE_STRING "${Project_MAJOR_VERSION}.${Project_MINOR_VERSION}"
+    TARGET tr-sort
+    APPEND PROPERTY COMPATIBLE_INTERFACE_STRING "${TrSort_MAJOR_VERSION}.${TrSort_MINOR_VERSION}"
 )
-# inherit common project compiler options
+# inherit common tr-sort compiler options
 target_link_libraries(
-    project
+    tr-sort
         PRIVATE
-            $<BUILD_INTERFACE:project-compiler-options>
+            $<BUILD_INTERFACE:tr-sort-compiler-options>
 )
 
-# install if we're not being built as a sub-project
-if (NOT PROJECT_SUBPROJECT)
+# install if we're not being built as a sub-tr-sort
+if (NOT TR_SORT_SUBPROJECT)
     # library
     install(
-        TARGETS project
-        EXPORT ProjectTargets
+        TARGETS tr-sort
+        EXPORT TrSortTargets
         # when a static library
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         # when a shared library on UNIX
@@ -58,27 +58,27 @@ if (NOT PROJECT_SUBPROJECT)
     )
     # CMake export
     install(
-        EXPORT ProjectTargets
-        FILE ProjectTargets.cmake
-        NAMESPACE Project::
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Project"
+        EXPORT TrSortTargets
+        FILE TrSortTargets.cmake
+        NAMESPACE TrSort::
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/TrSort"
     )
     # CMake package
     include(CMakePackageConfigHelpers)
     configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
-        "${CMAKE_CURRENT_BINARY_DIR}/ProjectConfig.cmake"
-        INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Project"
+        "${CMAKE_CURRENT_BINARY_DIR}/TrSortConfig.cmake"
+        INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/TrSort"
     )
     # generate the version file for the config file
     write_basic_package_version_file(
-        "${CMAKE_CURRENT_BINARY_DIR}/ProjectConfigVersion.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/TrSortConfigVersion.cmake"
         VERSION "${version}"
         COMPATIBILITY SameMinorVersion
     )
     install(
         FILES
-        "${CMAKE_CURRENT_BINARY_DIR}/ProjectConfig.cmake"
-        "${CMAKE_CURRENT_BINARY_DIR}/ProjectConfigVersion.cmake"
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Project"
+        "${CMAKE_CURRENT_BINARY_DIR}/TrSortConfig.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/TrSortConfigVersion.cmake"
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/TrSort"
     )
 endif()

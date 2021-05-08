@@ -1,9 +1,8 @@
 # top-level namespace source files
 target_sources(
-    project
+    tr-sort
         PRIVATE
-            Private.cpp
-            Public.cpp
+            common.cpp
 )
 # sub-namespace source directories
 # NOTE: none yet!
