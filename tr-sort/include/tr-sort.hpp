@@ -20,6 +20,7 @@
 #include <cmath>       // ceil, nextafter, pow
 #include <cstddef>
 #include <span>
+#include <vector>
 
 
 namespace com::saxbophone::tr_sort {
