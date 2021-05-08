@@ -5,5 +5,5 @@
 using namespace com::saxbophone::tr_sort;
 // dummy code
 TEST_CASE("Library works") {
-    REQUIRE(library_works());
+    REQUIRE(sort<int>({}));
 }

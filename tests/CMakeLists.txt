@@ -6,7 +6,7 @@ CPMFindPackage(
 )
 
 add_executable(tests)
-target_sources(tests PRIVATE main.cpp common.cpp)
+target_sources(tests PRIVATE main.cpp tr-sort.cpp)
 target_link_libraries(
     tests
     PRIVATE

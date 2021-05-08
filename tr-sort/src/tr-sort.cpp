@@ -13,7 +13,5 @@
 
 
 namespace com::saxbophone::tr_sort {
-    bool library_works() {
-        return true;
-    }
+    // the only function in the library is a template so it's defined in its header
 }

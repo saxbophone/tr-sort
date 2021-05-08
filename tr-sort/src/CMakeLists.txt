@@ -2,7 +2,7 @@
 target_sources(
     tr-sort
         PRIVATE
-            common.cpp
+            tr-sort.cpp
 )
 # sub-namespace source directories
 # NOTE: none yet!
