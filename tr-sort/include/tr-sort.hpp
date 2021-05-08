@@ -17,6 +17,7 @@
 #ifndef COM_SAXBOPHONE_TR_SORT_HPP
 #define COM_SAXBOPHONE_TR_SORT_HPP
 
+#include <cmath>       // ceil, nextafter, pow
 #include <cstddef>
 #include <span>
 
@@ -42,7 +43,84 @@ namespace com::saxbophone::tr_sort {
         typename Real = long double
     >
     bool sort(std::span<T, Extent> data) {
-        return true; // XXX: debug only
+        // don't sort zero-sized data
+        if (data.size() == 0) {
+            return true;
+        }
+        // gather stats on first pass of data
+        std::size_t size = data.size();
+        T min = std::numeric_limits<T>::max();
+        T max = std::numeric_limits<T>::lowest();
+        // Real mean = 0.0;
+        // Real mid = 0.0;
+        // must be Real because otherwise gives out-of-range values for signed types
+        Real range = 0;
+        T previous = data[0];
+        bool already_sorted = true;
+        for (auto datum : data) {
+            // mean += datum;
+            if (datum < min) {
+                min = datum;
+            }
+            // NOTE: >= to preserve stable sorting, so last max value gets put at end
+            /*
+             * Not actually an issue for this implementation because it only deals
+             * with primitives, however if extended to handle general-purpose types
+             * (using some casting), this will matter.
+             */
+            if (datum >= max) {
+                max = datum;
+            }
+            if (datum < previous) {
+                already_sorted = false;
+            }
+            previous = datum;
+        }
+        // short cut for already sorted
+        if (already_sorted) {
+            return true;
+        }
+        // short cut for size 2..3
+        if (data.size() < 4) {
+            data[0] = min;
+            data[data.size() - 1] = max;
+            if (data.size() == 2) {
+                return true; // size = 2 is all done
+            }
+            // size = 3 needs to find the middle too
+            for (auto datum : data) {
+                if (min <= datum and datum < max) {
+                    data[1] = datum;
+                    return true;
+                }
+            }
+        }
+        // mean /= size;
+        // mid = (min + max) / 2.0;
+        range = (Real)max - (Real)min;
+        // temporary storage for sorting -- vector of sub-vectors to store partial sorts
+        std::vector<std::vector<T>> sorts(data.size());
+        for (auto n : data) {
+            // calculated sort position
+            std::size_t pos = std::ceil((((Real)n - min) / range) * (size - 1));
+            if (pos > sorts.size() -1) {
+                return false;
+            }
+            sorts[pos].push_back(n);
+        }
+        // pull data out of sorted buckets, recursively sorting each before pulling
+        std::size_t i = 0;
+        for (auto& bucket : sorts) {
+            // recursively sort any sort buckets that are larger than 1
+            if (bucket.size() > 1) {
+                sort<T, std::dynamic_extent, Real>(bucket);
+            }
+            for (T datum : bucket) {
+                data[i] = datum;
+                i++;
+            }
+        }
+        return true;
     }
 }
 
