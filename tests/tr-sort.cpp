@@ -18,7 +18,7 @@ TEMPLATE_TEST_CASE(
     std::uint8_t, std::int8_t, std::uint16_t, std::int16_t, std::uint32_t,
     std::int32_t, std::uint64_t, std::int64_t, float, double, long double
 ) {
-    std::size_t test_exponent = GENERATE(range(2u, 4u));
+    std::size_t test_exponent = GENERATE(range(2u, 8u));
     std::size_t array_length = std::pow(10u, test_exponent);
     // PARAM: SIZE (100)
     std::vector<TestType> unsorted_data = prng.generate<TestType>(array_length);
@@ -30,5 +30,6 @@ TEMPLATE_TEST_CASE(
     // stable_sort returns void so no need to test return value
     std::stable_sort(stable_sorted_data.begin(), stable_sorted_data.end());
     // verify both sorted arrays are equal
-    REQUIRE(tr_sorted_data == stable_sorted_data);
+    bool equal = tr_sorted_data == stable_sorted_data;
+    REQUIRE(equal);
 }
