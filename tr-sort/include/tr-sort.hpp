@@ -42,7 +42,7 @@ namespace com::saxbophone::tr_sort {
         typename Real = long double
     >
     bool sort(std::span<T, Extent> data) {
-        return false;
+        return true; // XXX: debug only
     }
 }
 

@@ -10,6 +10,5 @@ using namespace com::saxbophone::tr_sort::PRIVATE::test_helpers;
 // dummy code
 TEST_CASE("Library works") {
     std::vector<long double> data = prng.generate<long double>(1024);
-    REQUIRE(data != data);
-    REQUIRE(sort<int>({}));
+    REQUIRE(sort<long double>({data}));
 }
