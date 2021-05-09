@@ -25,11 +25,14 @@
 
 namespace com::saxbophone::tr_sort {
     /**
+     * @brief Stable sorts the input dating using the Transposition Sort sorting
+     * algorithm.
      * @tparam T data typed stored in the iterable to sort
      * @tparam Extent size of iterable (leave default for dynamic size)
      * @tparam Real data type used by the algorithm for real numbers
      * @param data iterable to sort
-     * @returns data stable-sorted by Transposition Sort
+     * @returns `true` when the sort was successful
+     * @returns `false` when the sort was unsuccessful
      * @todo Add template param or function param for conversion lambda function
      * to be used for casting objects of type T to some other Scalar type. This
      * may or may not need an additional template type param to determine which
@@ -105,7 +108,7 @@ namespace com::saxbophone::tr_sort {
             // calculated sort position
             std::size_t pos = std::ceil((((Real)n - min) / range) * (size - 1));
             if (pos > sorts.size() -1) {
-                return false;
+                return false; // error, sort position calculated incorrectly
             }
             sorts[pos].push_back(n);
         }
