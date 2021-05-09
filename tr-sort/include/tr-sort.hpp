@@ -47,8 +47,8 @@ namespace com::saxbophone::tr_sort {
         typename Real = long double
     >
     bool sort(std::span<T, Extent> data) {
-        // don't sort zero-sized data
-        if (data.size() == 0) {
+        // don't sort data of length {0..1}
+        if (data.size() < 2) {
             return true;
         }
         // gather stats on first pass of data
@@ -84,21 +84,11 @@ namespace com::saxbophone::tr_sort {
         if (already_sorted) {
             return true;
         }
-        // short cut for size 2..3
-        // if (data.size() < 4) {
-        //     data[0] = min;
-        //     data[data.size() - 1] = max;
-        //     if (data.size() == 2) {
-        //         return true; // size = 2 is all done
-        //     }
-        //     // size = 3 needs to find the middle too
-        //     for (auto datum : data) {
-        //         if (min <= datum and datum < max) {
-        //             data[1] = datum;
-        //             return true;
-        //         }
-        //     }
-        // }
+        // short cut for size 2
+        if (data.size() == 2) {
+            data[0] = min;
+            data[data.size() - 1] = max;
+        }
         // mean /= size;
         // mid = (min + max) / 2.0;
         range = (Real)max - (Real)min;
