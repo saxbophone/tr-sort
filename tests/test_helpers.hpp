@@ -280,8 +280,8 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
         return this->_generate<
             float,
             float,
-            // std::uniform_real_distribution,
-            // std::exponential_distribution,
+            std::uniform_real_distribution,
+            std::exponential_distribution,
             std::gamma_distribution/*,*/
             // std::weibull_distribution,
             // std::extreme_value_distribution,
@@ -300,8 +300,8 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
         return this->_generate<
             double,
             double,
-            // std::uniform_real_distribution,
-            // std::exponential_distribution,
+            std::uniform_real_distribution,
+            std::exponential_distribution,
             std::gamma_distribution/*,*/
             // std::weibull_distribution,
             // std::extreme_value_distribution,
@@ -321,8 +321,8 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
         return this->_generate<
             long double,
             long double,
-            // std::uniform_real_distribution,
-            // std::exponential_distribution,
+            std::uniform_real_distribution,
+            std::exponential_distribution,
             std::gamma_distribution/*,*/
             // std::weibull_distribution,
             // std::extreme_value_distribution,
