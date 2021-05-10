@@ -19,7 +19,7 @@ TEMPLATE_TEST_CASE(
     std::int32_t, std::uint64_t, std::int64_t, float, double, long double
 ) {
     std::size_t test_exponent = GENERATE(range(1u, 2u));
-    std::size_t array_length = std::pow(10u, test_exponent);
+    std::size_t array_length = (std::size_t)std::pow(10u, test_exponent);
     for (int i = 0; i < 1000000; i++) {
         // PARAM: SIZE (100)
         std::vector<TestType> unsorted_data = prng.generate<TestType>(array_length);

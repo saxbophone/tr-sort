@@ -96,7 +96,7 @@ namespace com::saxbophone::tr_sort {
         std::vector<std::vector<T>> sorts(data.size());
         for (auto n : data) {
             // calculated sort position
-            std::size_t pos = std::ceil((((Real)n - min) / range) * (size - 1));
+            std::size_t pos = (std::size_t)std::ceil((((Real)n - min) / range) * (size - 1));
             if (pos > sorts.size() -1) {
                 return false; // error, sort position calculated incorrectly
             }
