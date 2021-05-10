@@ -71,14 +71,14 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
                 }
             public:
                 template <template<class> class Dist>
-                static Dist<GT> create_rnd(std::default_random_engine& engine) {
+                static Dist<GT> create_rnd(std::default_random_engine&) {
                     return Dist<GT>();
                 }
 
                 // distribution-specific overrides for integer generators
 
                 template <>
-                static std::uniform_int_distribution<GT> create_rnd(std::default_random_engine& engine) {
+                static std::uniform_int_distribution<GT> create_rnd(std::default_random_engine&) {
                     return std::uniform_int_distribution<GT>(
                         std::numeric_limits<OT>::min(),
                         std::numeric_limits<OT>::max()
