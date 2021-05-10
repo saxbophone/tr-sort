@@ -1,6 +1,7 @@
 #ifndef COM_SAXBOPHONE_TR_SORT_PRIVATE_TESTS_TEST_HELPERS_HPP
 #define COM_SAXBOPHONE_TR_SORT_PRIVATE_TESTS_TEST_HELPERS_HPP
 
+#include <algorithm>
 #include <cstddef>
 #include <cstdint>
 #include <limits>
@@ -27,9 +28,7 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
                 std::uniform_int_distribution,
                 std::binomial_distribution,
                 std::negative_binomial_distribution,
-                std::geometric_distribution,
-                std::poisson_distribution,
-                std::discrete_distribution
+                std::poisson_distribution
             >(size);
         }
 
@@ -63,6 +62,55 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
                 static Dist<GT> create_rnd(std::default_random_engine& engine) {
                     return Dist<GT>();
                 }
+
+                // distribution-specific overrides
+                template <>
+                static std::uniform_int_distribution<GT> create_rnd(std::default_random_engine& engine) {
+                    return std::uniform_int_distribution<GT>(
+                        std::numeric_limits<OT>::min(),
+                        std::numeric_limits<OT>::max()
+                    );
+                }
+
+                template <>
+                static std::binomial_distribution<GT> create_rnd(std::default_random_engine& engine) {
+                    std::uniform_real_distribution<double> probability(0.0, 1.0);
+                    return std::binomial_distribution<GT>(
+                        std::numeric_limits<OT>::max(),
+                        probability(engine)
+                    );
+                }
+
+                template <>
+                static std::negative_binomial_distribution<GT> create_rnd(std::default_random_engine& engine) {
+                    std::uniform_real_distribution<double> probability(0.0, 1.0);
+                    return std::negative_binomial_distribution<GT>(
+                        std::numeric_limits<OT>::max(),
+                        probability(engine)
+                    );
+                }
+
+                template <>
+                static std::poisson_distribution<GT> create_rnd(std::default_random_engine& engine) {
+                    std::uniform_real_distribution<double> probability(
+                        std::numeric_limits<OT>::min(),
+                        std::numeric_limits<OT>::max()
+                    );
+                    return std::poisson_distribution<GT>(probability(engine));
+                }
+
+                template <>
+                static std::discrete_distribution<GT> create_rnd(std::default_random_engine& engine) {
+                    std::uniform_real_distribution<double> probability(0.0, 1.0);
+                    // build a table of weights for each possible outcome
+                    std::vector<double> weights;
+                    std::generate_n(
+                        std::back_inserter(weights),
+                        std::numeric_limits<OT>::max(),
+                        [&](){ return probability(engine); }
+                    );
+                    return std::discrete_distribution<GT>(weights.begin(), weights.end());
+                }
             };
 
         public:
@@ -80,7 +128,6 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
                 // if it's 0, use this one, otherwise, go further down the chain
                 if (chosen == 0) {
                     // create the distribution
-                    // std::cout << typeid(RandomNumberDistribution<GenType>).name() << std::endl;
                     RandomNumberDistribution<GenType> dist = RNDMaker<T, GenType>::template create_rnd<RandomNumberDistribution>(engine);
                     // pre-allocate and initialise to size
                     std::vector<T> data(size);
@@ -134,7 +181,6 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             std::uniform_int_distribution,
             std::binomial_distribution,
             std::negative_binomial_distribution,
-            std::geometric_distribution,
             std::poisson_distribution,
             std::discrete_distribution
         >(size);
@@ -147,7 +193,36 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             std::uniform_int_distribution,
             std::binomial_distribution,
             std::negative_binomial_distribution,
-            std::geometric_distribution,
+            std::poisson_distribution,
+            std::discrete_distribution
+        >(size);
+    }
+
+    /*
+     * 16-bit types are also allowed to use the discrete distribution because
+     * the number of possible values is not so big that we cannot store a set
+     * of weights for them
+     */
+
+    template <> std::vector<std::uint16_t> PRNG::generate<std::uint16_t>(std::size_t size) {
+        return this->_generate<
+            std::uint16_t,
+            std::uint16_t,
+            std::uniform_int_distribution,
+            std::binomial_distribution,
+            std::negative_binomial_distribution,
+            std::poisson_distribution,
+            std::discrete_distribution
+        >(size);
+    }
+
+    template <> std::vector<std::int16_t> PRNG::generate<std::int16_t>(std::size_t size) {
+        return this->_generate<
+            std::int16_t,
+            std::int16_t,
+            std::uniform_int_distribution,
+            std::binomial_distribution,
+            std::negative_binomial_distribution,
             std::poisson_distribution,
             std::discrete_distribution
         >(size);
