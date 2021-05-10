@@ -55,6 +55,16 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             RandomNumberDistribution,
             RandomNumberDistributions...
         > {
+        private:
+            template <typename GT>
+            class RNDMaker {
+            public:
+                template <template<class> class Dist>
+                static Dist<GT> create_rnd(std::default_random_engine& engine) {
+                    return Dist<GT>();
+                }
+            };
+
         public:
             static std::vector<T> generate(
                 std::default_random_engine& engine,
@@ -70,12 +80,8 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
                 // if it's 0, use this one, otherwise, go further down the chain
                 if (chosen == 0) {
                     // create the distribution
-                    // RandomNumberDistribution<GenType> dist(
-                    //     std::numeric_limits<T>::min(),
-                    //     std::numeric_limits<T>::max()
-                    // );
                     // std::cout << typeid(RandomNumberDistribution<GenType>).name() << std::endl;
-                    RandomNumberDistribution<GenType> dist;
+                    RandomNumberDistribution<GenType> dist = RNDMaker<GenType>::template create_rnd<RandomNumberDistribution>(engine);
                     // pre-allocate and initialise to size
                     std::vector<T> data(size);
                     // fill vector with lambda calling prng
