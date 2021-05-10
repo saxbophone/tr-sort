@@ -13,7 +13,7 @@ using namespace com::saxbophone::tr_sort;
 namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
     class PRNG {
     public:
-        PRNG() : engine(std::random_device()()) {}
+        PRNG() : _engine(std::random_device()()) {}
 
         // default --assume integral types
         template <typename T>
@@ -22,6 +22,11 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
         }
 
     private:
+        std::size_t _roll(std::size_t choices) {
+            std::uniform_int_distribution<std::size_t> chooser(0, choices - 1);
+            return chooser(this->_engine);
+        }
+
         template <typename T, typename GenType, template<class> class RandomNumberDistribution>
         std::vector<T> _generate(std::size_t size) {
             // create the distribution
@@ -32,11 +37,11 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             // pre-allocate and initialise to size
             std::vector<T> data(size);
             // fill vector with lambda calling prng
-            std::generate(data.begin(), data.end(), [&](){ return (T)dist(this->engine); });
+            std::generate(data.begin(), data.end(), [&](){ return (T)dist(this->_engine); });
             return data;
         }
 
-        std::default_random_engine engine;
+        std::default_random_engine _engine;
     };
 
     /*
