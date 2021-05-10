@@ -56,7 +56,7 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             RandomNumberDistributions...
         > {
         private:
-            template <typename GT>
+            template <typename OT, typename GT>
             class RNDMaker {
             public:
                 template <template<class> class Dist>
@@ -81,7 +81,7 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
                 if (chosen == 0) {
                     // create the distribution
                     // std::cout << typeid(RandomNumberDistribution<GenType>).name() << std::endl;
-                    RandomNumberDistribution<GenType> dist = RNDMaker<GenType>::template create_rnd<RandomNumberDistribution>(engine);
+                    RandomNumberDistribution<GenType> dist = RNDMaker<T, GenType>::template create_rnd<RandomNumberDistribution>(engine);
                     // pre-allocate and initialise to size
                     std::vector<T> data(size);
                     // fill vector with lambda calling prng
