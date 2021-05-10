@@ -23,8 +23,8 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
 
     private:
         std::size_t _roll(std::size_t choices) {
-            std::uniform_int_distribution<std::size_t> chooser(0, choices - 1);
-            return chooser(this->_engine);
+            std::uniform_int_distribution<std::size_t> dice(0, choices - 1);
+            return dice(this->_mengine);
         }
 
         template <typename T, typename GenType, template<class> class RandomNumberDistribution>
