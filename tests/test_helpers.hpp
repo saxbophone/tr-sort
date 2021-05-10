@@ -2,6 +2,7 @@
 #define COM_SAXBOPHONE_TR_SORT_PRIVATE_TESTS_TEST_HELPERS_HPP
 
 #include <algorithm>
+#include <cfloat>
 #include <cstddef>
 #include <cstdint>
 #include <limits>
@@ -63,7 +64,8 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
                     return Dist<GT>();
                 }
 
-                // distribution-specific overrides
+                // distribution-specific overrides for integer generators
+
                 template <>
                 static std::uniform_int_distribution<GT> create_rnd(std::default_random_engine& engine) {
                     return std::uniform_int_distribution<GT>(
@@ -110,6 +112,24 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
                         [&](){ return probability(engine); }
                     );
                     return std::discrete_distribution<GT>(weights.begin(), weights.end());
+                }
+
+                // distribution-specific overrides for real generators
+                template <>
+                static std::uniform_real_distribution<GT> create_rnd(std::default_random_engine& engine) {
+                    // pick a max and min range within those exactly representable
+                    int max_digits;
+                    if (typeid(OT) == typeid(float)) {
+                        max_digits = FLT_MANT_DIG;
+                    } else if (typeid(OT) == typeid(double)) {
+                        max_digits = DBL_MANT_DIG;
+                    } else {
+                        max_digits = LDBL_MANT_DIG;
+                    }
+                    std::uniform_int_distribution<int> digits_range(1, max_digits);
+                    GT min = -std::pow(FLT_RADIX, digits_range(engine));
+                    GT max = +std::pow(FLT_RADIX, digits_range(engine));
+                    return std::uniform_real_distribution<GT>(min, max);
                 }
             };
 
@@ -237,7 +257,7 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
         return this->_generate<
             float,
             float,
-            std::uniform_real_distribution,
+            std::uniform_real_distribution/*,
             std::exponential_distribution,
             std::gamma_distribution,
             std::weibull_distribution,
@@ -249,7 +269,7 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             std::fisher_f_distribution,
             std::student_t_distribution,
             std::piecewise_constant_distribution,
-            std::piecewise_linear_distribution
+            std::piecewise_linear_distribution*/
         >(size);
     }
 
@@ -257,7 +277,7 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
         return this->_generate<
             double,
             double,
-            std::uniform_real_distribution,
+            std::uniform_real_distribution/*,
             std::exponential_distribution,
             std::gamma_distribution,
             std::weibull_distribution,
@@ -269,7 +289,7 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             std::fisher_f_distribution,
             std::student_t_distribution,
             std::piecewise_constant_distribution,
-            std::piecewise_linear_distribution
+            std::piecewise_linear_distribution*/
         >(size);
     }
 
@@ -278,7 +298,7 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
         return this->_generate<
             long double,
             long double,
-            std::uniform_real_distribution,
+            std::uniform_real_distribution/*,
             std::exponential_distribution,
             std::gamma_distribution,
             std::weibull_distribution,
@@ -290,7 +310,7 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             std::fisher_f_distribution,
             std::student_t_distribution,
             std::piecewise_constant_distribution,
-            std::piecewise_linear_distribution
+            std::piecewise_linear_distribution*/
         >(size);
     }
 
