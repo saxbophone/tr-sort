@@ -115,6 +115,7 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
                 }
 
                 // distribution-specific overrides for real generators
+
                 template <>
                 static std::uniform_real_distribution<GT> create_rnd(std::default_random_engine& engine) {
                     // pick a max and min range within those exactly representable
@@ -130,6 +131,22 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
                     GT min = -std::pow(FLT_RADIX, digits_range(engine));
                     GT max = +std::pow(FLT_RADIX, digits_range(engine));
                     return std::uniform_real_distribution<GT>(min, max);
+                }
+
+                template <>
+                static std::exponential_distribution<GT> create_rnd(std::default_random_engine& engine) {
+                    int max_digits;
+                    if (typeid(OT) == typeid(float)) {
+                        max_digits = FLT_MANT_DIG;
+                    } else if (typeid(OT) == typeid(double)) {
+                        max_digits = DBL_MANT_DIG;
+                    } else {
+                        max_digits = LDBL_MANT_DIG;
+                    }
+                    std::uniform_int_distribution<int> digits_range(1, max_digits);
+                    return std::exponential_distribution<GT>(
+                        1.0 / std::pow(FLT_RADIX, digits_range(engine))
+                    );
                 }
             };
 
@@ -151,6 +168,7 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
                     RandomNumberDistribution<GenType> dist = RNDMaker<T, GenType>::template create_rnd<RandomNumberDistribution>(engine);
                     // pre-allocate and initialise to size
                     std::vector<T> data(size);
+                    std::cout << dist.min() << " " << dist.max() << std::endl;
                     // fill vector with lambda calling prng
                     std::generate(data.begin(), data.end(), [&](){ return (T)dist(engine); });
                     return data;
@@ -257,19 +275,19 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
         return this->_generate<
             float,
             float,
-            std::uniform_real_distribution/*,
-            std::exponential_distribution,
-            std::gamma_distribution,
-            std::weibull_distribution,
-            std::extreme_value_distribution,
-            std::normal_distribution,
-            std::lognormal_distribution,
-            std::chi_squared_distribution,
-            std::cauchy_distribution,
-            std::fisher_f_distribution,
-            std::student_t_distribution,
-            std::piecewise_constant_distribution,
-            std::piecewise_linear_distribution*/
+            // std::uniform_real_distribution,
+            std::exponential_distribution/*,*/
+            // std::gamma_distribution,
+            // std::weibull_distribution,
+            // std::extreme_value_distribution,
+            // std::normal_distribution,
+            // std::lognormal_distribution,
+            // std::chi_squared_distribution,
+            // std::cauchy_distribution,
+            // std::fisher_f_distribution,
+            // std::student_t_distribution,
+            // std::piecewise_constant_distribution,
+            // std::piecewise_linear_distribution
         >(size);
     }
 
@@ -277,19 +295,19 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
         return this->_generate<
             double,
             double,
-            std::uniform_real_distribution/*,
-            std::exponential_distribution,
-            std::gamma_distribution,
-            std::weibull_distribution,
-            std::extreme_value_distribution,
-            std::normal_distribution,
-            std::lognormal_distribution,
-            std::chi_squared_distribution,
-            std::cauchy_distribution,
-            std::fisher_f_distribution,
-            std::student_t_distribution,
-            std::piecewise_constant_distribution,
-            std::piecewise_linear_distribution*/
+            // std::uniform_real_distribution,
+            std::exponential_distribution/*,*/
+            // std::gamma_distribution,
+            // std::weibull_distribution,
+            // std::extreme_value_distribution,
+            // std::normal_distribution,
+            // std::lognormal_distribution,
+            // std::chi_squared_distribution,
+            // std::cauchy_distribution,
+            // std::fisher_f_distribution,
+            // std::student_t_distribution,
+            // std::piecewise_constant_distribution,
+            // std::piecewise_linear_distribution
         >(size);
     }
 
@@ -298,19 +316,19 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
         return this->_generate<
             long double,
             long double,
-            std::uniform_real_distribution/*,
-            std::exponential_distribution,
-            std::gamma_distribution,
-            std::weibull_distribution,
-            std::extreme_value_distribution,
-            std::normal_distribution,
-            std::lognormal_distribution,
-            std::chi_squared_distribution,
-            std::cauchy_distribution,
-            std::fisher_f_distribution,
-            std::student_t_distribution,
-            std::piecewise_constant_distribution,
-            std::piecewise_linear_distribution*/
+            // std::uniform_real_distribution,
+            std::exponential_distribution/*,*/
+            // std::gamma_distribution,
+            // std::weibull_distribution,
+            // std::extreme_value_distribution,
+            // std::normal_distribution,
+            // std::lognormal_distribution,
+            // std::chi_squared_distribution,
+            // std::cauchy_distribution,
+            // std::fisher_f_distribution,
+            // std::student_t_distribution,
+            // std::piecewise_constant_distribution,
+            // std::piecewise_linear_distribution
         >(size);
     }
 
