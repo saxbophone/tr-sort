@@ -15,10 +15,10 @@ using namespace com::saxbophone::tr_sort::PRIVATE::test_helpers; // prng
 
 TEMPLATE_TEST_CASE(
     "tr_sort::sort() does a stable sort on input arrays of varying size", "",
-    /*std::uint8_t, std::int8_t, std::uint16_t, std::int16_t, std::uint32_t,
-    std::int32_t, std::uint64_t, std::int64_t, */float, double, long double
+    std::uint8_t, std::int8_t, std::uint16_t, std::int16_t, std::uint32_t,
+    std::int32_t, std::uint64_t, std::int64_t, float, double, long double
 ) {
-    std::size_t test_exponent = GENERATE(range(1u, 2u));
+    std::size_t test_exponent = GENERATE(range(1u, 4u));
     std::size_t array_length = (std::size_t)std::pow(10u, test_exponent);
     for (int i = 0; i < 1000; i++) {
         // PARAM: SIZE (100)

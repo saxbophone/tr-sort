@@ -27,7 +27,6 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
                 T,
                 T,
                 std::uniform_int_distribution,
-                std::binomial_distribution,
                 std::negative_binomial_distribution,
                 std::poisson_distribution
             >(size);
@@ -173,7 +172,6 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
                     RandomNumberDistribution<GenType> dist = RNDMaker<T, GenType>::template create_rnd<RandomNumberDistribution>(engine);
                     // pre-allocate and initialise to size
                     std::vector<T> data(size);
-                    std::cout << dist.min() << " " << dist.max() << std::endl;
                     // fill vector with lambda calling prng
                     std::generate(data.begin(), data.end(), [&](){ return (T)dist(engine); });
                     return data;
