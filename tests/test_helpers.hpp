@@ -32,9 +32,7 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             // pre-allocate and initialise to size
             std::vector<T> data(size);
             // fill vector with lambda calling prng
-            for (auto& item : data) {
-                item = (GenType)dist(this->engine);
-            }
+            std::generate(data.begin(), data.end(), [&](){ return (T)dist(this->engine); });
             return data;
         }
 
