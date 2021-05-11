@@ -16,6 +16,36 @@
 using namespace com::saxbophone::tr_sort;
 
 namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
+    /*
+     * a special random number distribution which generates floating point
+     * values of various types, uniformly by valid bit pattern (i.e. not
+     * numerically uniformly, rather, every valid bit pattern for the floating
+     * point format being generated is equally likely to appear).
+     * Only meaningful when IEEE-754 is in use.
+     */
+    template <typename T>
+    class uniform_discrete_float_distribution {
+    public:
+        uniform_discrete_float_distribution() {
+            static_assert(std::numeric_limits<T>::is_iec559);
+        }
+
+        template <class Generator>
+        T operator()(Generator& g) {
+            std::uniform_real_distribution<T> mantissa_generator(
+                -std::pow(2.0, std::numeric_limits<T>::digits - 1),
+                +std::pow(2.0, std::numeric_limits<T>::digits - 1)
+            );
+            // exponent range
+            std::uniform_int_distribution<int> exponent_generator(
+                std::numeric_limits<T>::min_exponent,
+                std::numeric_limits<T>::max_exponent
+            );
+            // std::cout << mantissa_generator(g) << " " << exponent_generator(g) << std::endl;
+            return std::ldexp(mantissa_generator(g), exponent_generator(g));
+        }
+    };
+
     class PRNG {
     public:
         PRNG() : _engine(std::random_device()()) {}
@@ -278,9 +308,10 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
         return this->_generate<
             float,
             float,
-            std::uniform_real_distribution,
-            std::exponential_distribution,
-            std::gamma_distribution/*,*/
+            // std::uniform_real_distribution,
+            // std::exponential_distribution,
+            // std::gamma_distribution,
+            uniform_discrete_float_distribution
             // std::weibull_distribution,
             // std::extreme_value_distribution,
             // std::normal_distribution,
@@ -298,9 +329,10 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
         return this->_generate<
             double,
             double,
-            std::uniform_real_distribution,
-            std::exponential_distribution,
-            std::gamma_distribution/*,*/
+            // std::uniform_real_distribution,
+            // std::exponential_distribution,
+            // std::gamma_distribution,
+            uniform_discrete_float_distribution
             // std::weibull_distribution,
             // std::extreme_value_distribution,
             // std::normal_distribution,
@@ -319,9 +351,10 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
         return this->_generate<
             long double,
             long double,
-            std::uniform_real_distribution,
-            std::exponential_distribution,
-            std::gamma_distribution/*,*/
+            // std::uniform_real_distribution,
+            // std::exponential_distribution,
+            // std::gamma_distribution,
+            uniform_discrete_float_distribution
             // std::weibull_distribution,
             // std::extreme_value_distribution,
             // std::normal_distribution,
