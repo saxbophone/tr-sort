@@ -17,6 +17,8 @@
 #ifndef COM_SAXBOPHONE_TR_SORT_HPP
 #define COM_SAXBOPHONE_TR_SORT_HPP
 
+#include <iostream>
+
 #include <cmath>       // ceil, nextafter, pow
 #include <cstddef>
 #include <span>
@@ -113,14 +115,25 @@ namespace com::saxbophone::tr_sort {
         // temporary storage for sorting -- vector of sub-vectors to store partial sorts
         std::vector<std::vector<T>> sorts(data.size() + 2);
         for (auto n : data) {
+            if constexpr (std::is_floating_point<T>::value) {
+                if (n == -std::numeric_limits<T>::infinity()) {
+                    sorts[0].push_back(n);
+                    continue;
+                } else if (n == +std::numeric_limits<T>::infinity()) {
+                    sorts[sorts.size() - 1].push_back(n);
+                    continue;
+                }
+            }
             // calculated sort position
-            Real raw_pos = std::ceil((((Real)n - min) / range) * (size - 1)) + 1;
-            std::size_t pos = (std::size_t)raw_pos;
+            Real raw_pos = std::ceil((((Real)n - min) / range) * (size - 1));
+            std::size_t pos = std::isnan(raw_pos) ? 1u : (std::size_t)raw_pos;
             if (raw_pos < 0) {
                 pos = 0;
             } else if (raw_pos > (sorts.size() - 1)) {
                 pos = sorts.size() - 1;
             }
+            pos += 1;
+            // std::cout << "n: " << n << " raw_pos: " << raw_pos << " pos: " << pos << std::endl;
             sorts[pos].push_back(n);
         }
         // pull data out of sorted buckets, recursively sorting each before pulling
@@ -128,6 +141,12 @@ namespace com::saxbophone::tr_sort {
         for (auto& bucket : sorts) {
             // recursively sort any sort buckets that are larger than 1
             if (bucket.size() > 1) {
+                // std::cout << "recurse({";
+                // for (auto datum : bucket) {
+                //     std::cout << datum << ", ";
+                // }
+                // std::cout << "});" << std::endl;
+                // std::cin.get();
                 sort<T, std::dynamic_extent, Real>(bucket);
             }
             for (T datum : bucket) {
