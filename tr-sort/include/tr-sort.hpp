@@ -20,6 +20,7 @@
 #include <cmath>       // ceil, nextafter, pow
 #include <cstddef>
 #include <span>
+#include <type_traits>
 #include <vector>
 
 
@@ -53,8 +54,14 @@ namespace com::saxbophone::tr_sort {
         }
         // gather stats on first pass of data
         std::size_t size = data.size();
-        T min = std::numeric_limits<T>::max();
-        T max = std::numeric_limits<T>::lowest();
+        T min, max;
+        if constexpr (std::is_floating_point<T>::value) {
+            min = +std::numeric_limits<T>::infinity();
+            max = -std::numeric_limits<T>::infinity();
+        } else {
+            min = std::numeric_limits<T>::max();
+            max = std::numeric_limits<T>::lowest();
+        }
         // Real mean = 0.0;
         // Real mid = 0.0;
         // must be Real because otherwise gives out-of-range values for signed types
@@ -62,6 +69,9 @@ namespace com::saxbophone::tr_sort {
         T previous = data[0];
         bool already_sorted = true;
         for (auto datum : data) {
+            // if (not std::isfinite(datum)) {
+            //     continue; // skip non-finite values
+            // }
             // mean += datum;
             if (datum < min) {
                 min = datum;
@@ -89,6 +99,14 @@ namespace com::saxbophone::tr_sort {
             data[0] = min;
             data[data.size() - 1] = max;
         }
+        if constexpr (std::is_floating_point<T>::value) {
+            if (min == -std::numeric_limits<T>::infinity()) {
+                min = std::numeric_limits<T>::lowest();
+            }
+            if (max == +std::numeric_limits<T>::infinity()) {
+                max = std::numeric_limits<T>::max();
+            }
+        }
         // mean /= size;
         // mid = (min + max) / 2.0;
         range = (Real)max - (Real)min;
@@ -96,9 +114,12 @@ namespace com::saxbophone::tr_sort {
         std::vector<std::vector<T>> sorts(data.size());
         for (auto n : data) {
             // calculated sort position
-            std::size_t pos = (std::size_t)std::ceil((((Real)n - min) / range) * (size - 1));
-            if (pos > sorts.size() -1) {
-                return false; // error, sort position calculated incorrectly
+            Real raw_pos = std::ceil((((Real)n - min) / range) * (size - 1));
+            std::size_t pos = (std::size_t)raw_pos;
+            if (raw_pos < 0) {
+                pos = 0;
+            } else if (raw_pos > (sorts.size() - 1)) {
+                pos = sorts.size() - 1;
             }
             sorts[pos].push_back(n);
         }
