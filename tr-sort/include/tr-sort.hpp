@@ -111,10 +111,10 @@ namespace com::saxbophone::tr_sort {
         // mid = (min + max) / 2.0;
         range = (Real)max - (Real)min;
         // temporary storage for sorting -- vector of sub-vectors to store partial sorts
-        std::vector<std::vector<T>> sorts(data.size());
+        std::vector<std::vector<T>> sorts(data.size() + 2);
         for (auto n : data) {
             // calculated sort position
-            Real raw_pos = std::ceil((((Real)n - min) / range) * (size - 1));
+            Real raw_pos = std::ceil((((Real)n - min) / range) * (size - 1)) + 1;
             std::size_t pos = (std::size_t)raw_pos;
             if (raw_pos < 0) {
                 pos = 0;
