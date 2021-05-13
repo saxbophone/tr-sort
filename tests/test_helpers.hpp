@@ -9,9 +9,6 @@
 #include <random>
 #include <vector>
 
-#include <iostream>
-#include <typeinfo>
-
 
 using namespace com::saxbophone::tr_sort;
 
@@ -41,8 +38,15 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
                 std::numeric_limits<T>::min_exponent,
                 std::numeric_limits<T>::max_exponent
             );
-            // std::cout << mantissa_generator(g) << " " << exponent_generator(g) << std::endl;
             return std::ldexp(mantissa_generator(g), exponent_generator(g));
+        }
+
+        T min() {
+            return -std::numeric_limits<T>::infinity();
+        }
+
+        T max() {
+            return +std::numeric_limits<T>::infinity();
         }
     };
 
@@ -57,7 +61,6 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
                 T,
                 T,
                 std::uniform_int_distribution,
-                std::negative_binomial_distribution,
                 std::poisson_distribution
             >(size);
         }
@@ -85,55 +88,30 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             RandomNumberDistributions...
         > {
         private:
-            template <typename OT, typename GT>
+            template <typename OT, typename GT, template<class> class Dist>
             class RNDMaker {
-            private:
-                static int binary_digits_precision() {
-                    if (typeid(OT) == typeid(float)) {
-                        return FLT_MANT_DIG;
-                    } else if (typeid(OT) == typeid(double)) {
-                        return DBL_MANT_DIG;
-                    } else if (typeid(OT) == typeid(long double)) {
-                        return LDBL_MANT_DIG;
-                    } else {
-                        throw "Not a floating point type";
-                    }
-                }
             public:
-                template <template<class> class Dist>
                 static Dist<GT> create_rnd(std::default_random_engine&) {
                     return Dist<GT>();
                 }
+            };
 
-                // distribution-specific overrides for integer generators
+            // distribution-specific partial specialisations for integer generators
 
-                template <>
+            template <typename OT, typename GT>
+            class RNDMaker<OT, GT, std::uniform_int_distribution> {
+            public:
                 static std::uniform_int_distribution<GT> create_rnd(std::default_random_engine&) {
                     return std::uniform_int_distribution<GT>(
                         std::numeric_limits<OT>::min(),
                         std::numeric_limits<OT>::max()
                     );
                 }
+            };
 
-                template <>
-                static std::binomial_distribution<GT> create_rnd(std::default_random_engine& engine) {
-                    std::uniform_real_distribution<double> probability(0.0, 1.0);
-                    return std::binomial_distribution<GT>(
-                        std::numeric_limits<OT>::max(),
-                        probability(engine)
-                    );
-                }
-
-                template <>
-                static std::negative_binomial_distribution<GT> create_rnd(std::default_random_engine& engine) {
-                    std::uniform_real_distribution<double> probability(0.0, 1.0);
-                    return std::negative_binomial_distribution<GT>(
-                        std::numeric_limits<OT>::max(),
-                        probability(engine)
-                    );
-                }
-
-                template <>
+            template <typename OT, typename GT>
+            class RNDMaker<OT, GT, std::poisson_distribution> {
+            public:
                 static std::poisson_distribution<GT> create_rnd(std::default_random_engine& engine) {
                     std::uniform_real_distribution<double> probability(
                         std::numeric_limits<OT>::min(),
@@ -141,8 +119,11 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
                     );
                     return std::poisson_distribution<GT>(probability(engine));
                 }
+            };
 
-                template <>
+            template <typename OT, typename GT>
+            class RNDMaker<OT, GT, std::discrete_distribution> {
+            public:
                 static std::discrete_distribution<GT> create_rnd(std::default_random_engine& engine) {
                     std::uniform_real_distribution<double> probability(0.0, 1.0);
                     // build a table of weights for each possible outcome
@@ -154,29 +135,38 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
                     );
                     return std::discrete_distribution<GT>(weights.begin(), weights.end());
                 }
+            };
 
-                // distribution-specific overrides for real generators
+            // distribution-specific overrides for real generators
 
-                template <>
+            template <typename OT, typename GT>
+            class RNDMaker<OT, GT, std::uniform_real_distribution> {
+            public:
                 static std::uniform_real_distribution<GT> create_rnd(std::default_random_engine& engine) {
                     // pick a max and min range within those exactly representable
-                    std::uniform_int_distribution<int> digits_range(1, binary_digits_precision());
+                    std::uniform_int_distribution<int> digits_range(1, std::numeric_limits<OT>::digits);
                     GT min = -std::pow(FLT_RADIX, digits_range(engine));
                     GT max = +std::pow(FLT_RADIX, digits_range(engine));
                     return std::uniform_real_distribution<GT>(min, max);
                 }
+            };
 
-                template <>
+            template <typename OT, typename GT>
+            class RNDMaker<OT, GT, std::exponential_distribution> {
+            public:
                 static std::exponential_distribution<GT> create_rnd(std::default_random_engine& engine) {
-                    std::uniform_int_distribution<int> digits_range(1, binary_digits_precision());
+                    std::uniform_int_distribution<int> digits_range(1, std::numeric_limits<OT>::digits);
                     return std::exponential_distribution<GT>(
                         1.0 / std::pow(FLT_RADIX, digits_range(engine))
                     );
                 }
+            };
 
-                template <>
+            template <typename OT, typename GT>
+            class RNDMaker<OT, GT, std::gamma_distribution> {
+            public:
                 static std::gamma_distribution<GT> create_rnd(std::default_random_engine& engine) {
-                    std::uniform_int_distribution<int> digits_range(0, binary_digits_precision());
+                    std::uniform_int_distribution<int> digits_range(0, std::numeric_limits<OT>::digits);
                     return std::gamma_distribution<GT>(
                         std::pow(FLT_RADIX, digits_range(engine)) - 0.999, // not quite 0
                         std::pow(FLT_RADIX, digits_range(engine))
@@ -199,11 +189,14 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
                 // if it's 0, use this one, otherwise, go further down the chain
                 if (chosen == 0) {
                     // create the distribution
-                    RandomNumberDistribution<GenType> dist = RNDMaker<T, GenType>::template create_rnd<RandomNumberDistribution>(engine);
+                    RandomNumberDistribution<GenType> dist = RNDMaker<T, GenType, RandomNumberDistribution>::create_rnd(engine);
                     // pre-allocate and initialise to size
                     std::vector<T> data(size);
                     // fill vector with lambda calling prng
-                    std::generate(data.begin(), data.end(), [&](){ return (T)dist(engine); });
+                    // std::generate(data.begin(), data.end(), [&](){ return (T)dist(engine); });
+                    for (auto& datum : data) {
+                        datum = (T)dist(engine);
+                    }
                     return data;
                 } else {
                     return RND<T, GenType, RandomNumberDistributions...>::generate(engine, size, chosen - 1);
@@ -250,8 +243,6 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             std::uint8_t,
             std::uint16_t,
             std::uniform_int_distribution,
-            std::binomial_distribution,
-            std::negative_binomial_distribution,
             std::poisson_distribution,
             std::discrete_distribution
         >(size);
@@ -262,8 +253,6 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             std::int8_t,
             std::int16_t,
             std::uniform_int_distribution,
-            std::binomial_distribution,
-            std::negative_binomial_distribution,
             std::poisson_distribution,
             std::discrete_distribution
         >(size);
@@ -280,8 +269,6 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             std::uint16_t,
             std::uint16_t,
             std::uniform_int_distribution,
-            std::binomial_distribution,
-            std::negative_binomial_distribution,
             std::poisson_distribution,
             std::discrete_distribution
         >(size);
@@ -292,8 +279,6 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             std::int16_t,
             std::int16_t,
             std::uniform_int_distribution,
-            std::binomial_distribution,
-            std::negative_binomial_distribution,
             std::poisson_distribution,
             std::discrete_distribution
         >(size);
@@ -308,9 +293,9 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
         return this->_generate<
             float,
             float,
-            // std::uniform_real_distribution,
-            // std::exponential_distribution,
-            // std::gamma_distribution,
+            std::uniform_real_distribution,
+            std::exponential_distribution,
+            std::gamma_distribution,
             uniform_discrete_float_distribution
             // std::weibull_distribution,
             // std::extreme_value_distribution,
@@ -329,9 +314,9 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
         return this->_generate<
             double,
             double,
-            // std::uniform_real_distribution,
-            // std::exponential_distribution,
-            // std::gamma_distribution,
+            std::uniform_real_distribution,
+            std::exponential_distribution,
+            std::gamma_distribution,
             uniform_discrete_float_distribution
             // std::weibull_distribution,
             // std::extreme_value_distribution,
@@ -351,9 +336,9 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
         return this->_generate<
             long double,
             long double,
-            // std::uniform_real_distribution,
-            // std::exponential_distribution,
-            // std::gamma_distribution,
+            std::uniform_real_distribution,
+            std::exponential_distribution,
+            std::gamma_distribution,
             uniform_discrete_float_distribution
             // std::weibull_distribution,
             // std::extreme_value_distribution,

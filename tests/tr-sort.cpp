@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
@@ -65,11 +63,6 @@ TEMPLATE_TEST_CASE(
         );
         std::vector<TestType> tr_sorted_data = unsorted_data;
         std::vector<TestType> stable_sorted_data = unsorted_data;
-        // std::cout << "sort({";
-        // for (auto datum : unsorted_data) {
-        //     std::cout << datum << ", ";
-        // }
-        // std::cout << "});" << std::endl;
         // sort with tr-sort and stdlib stable_sort
         REQUIRE(tr_sort::sort<TestType>({tr_sorted_data}));
         // stable_sort returns void so no need to test return value
