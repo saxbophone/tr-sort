@@ -30,8 +30,8 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
         template <class Generator>
         T operator()(Generator& g) {
             std::uniform_real_distribution<T> mantissa_generator(
-                -std::pow((T)2.0, std::numeric_limits<T>::digits - 1),
-                +std::pow((T)2.0, std::numeric_limits<T>::digits - 1)
+                -std::pow((T)2.0, (T)std::numeric_limits<T>::digits - 1),
+                +std::pow((T)2.0, (T)std::numeric_limits<T>::digits - 1)
             );
             // exponent range
             std::uniform_int_distribution<int> exponent_generator(
@@ -145,8 +145,8 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
                 static std::uniform_real_distribution<GT> create_rnd(std::default_random_engine& engine) {
                     // pick a max and min range within those exactly representable
                     std::uniform_int_distribution<int> digits_range(1, std::numeric_limits<OT>::digits);
-                    GT min = -std::pow((GT)FLT_RADIX, digits_range(engine));
-                    GT max = +std::pow((GT)FLT_RADIX, digits_range(engine));
+                    GT min = -std::pow((GT)FLT_RADIX, (GT)digits_range(engine));
+                    GT max = +std::pow((GT)FLT_RADIX, (GT)digits_range(engine));
                     return std::uniform_real_distribution<GT>(min, max);
                 }
             };
@@ -157,7 +157,7 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
                 static std::exponential_distribution<GT> create_rnd(std::default_random_engine& engine) {
                     std::uniform_int_distribution<int> digits_range(1, std::numeric_limits<OT>::digits);
                     return std::exponential_distribution<GT>(
-                        1.0 / std::pow((GT)FLT_RADIX, digits_range(engine))
+                        1.0 / std::pow((GT)FLT_RADIX, (GT)digits_range(engine))
                     );
                 }
             };
@@ -168,8 +168,8 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
                 static std::gamma_distribution<GT> create_rnd(std::default_random_engine& engine) {
                     std::uniform_int_distribution<int> digits_range(0, std::numeric_limits<OT>::digits);
                     return std::gamma_distribution<GT>(
-                        std::pow((GT)FLT_RADIX, digits_range(engine)) - 0.999, // not quite 0
-                        std::pow((GT)FLT_RADIX, digits_range(engine))
+                        std::pow((GT)FLT_RADIX, (GT)digits_range(engine)) - 0.999, // not quite 0
+                        std::pow((GT)FLT_RADIX, (GT)digits_range(engine))
                     );
                 }
             };
