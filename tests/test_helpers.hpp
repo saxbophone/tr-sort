@@ -157,7 +157,7 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
                 static std::exponential_distribution<GT> create_rnd(std::default_random_engine& engine) {
                     std::uniform_int_distribution<int> digits_range(1, std::numeric_limits<OT>::digits);
                     return std::exponential_distribution<GT>(
-                        1.0 / std::pow((GT)FLT_RADIX, (GT)digits_range(engine))
+                        (GT)1.0 / std::pow((GT)FLT_RADIX, (GT)digits_range(engine))
                     );
                 }
             };
@@ -168,7 +168,7 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
                 static std::gamma_distribution<GT> create_rnd(std::default_random_engine& engine) {
                     std::uniform_int_distribution<int> digits_range(0, std::numeric_limits<OT>::digits);
                     return std::gamma_distribution<GT>(
-                        std::pow((GT)FLT_RADIX, (GT)digits_range(engine)) - 0.999, // not quite 0
+                        std::pow((GT)FLT_RADIX, (GT)digits_range(engine)) - (GT)0.999, // not quite 0
                         std::pow((GT)FLT_RADIX, (GT)digits_range(engine))
                     );
                 }
