@@ -31,9 +31,9 @@ TEMPLATE_TEST_CASE(
         // stable_sort returns void so no need to test return value
         std::stable_sort(stable_sorted_data.begin(), stable_sorted_data.end());
         // verify both sorted arrays are equal
-        // bool equal = tr_sorted_data == stable_sorted_data;
-        REQUIRE(tr_sorted_data == stable_sorted_data);
-        // REQUIRE(equal);
+        bool equal = tr_sorted_data == stable_sorted_data;
+        // REQUIRE(tr_sorted_data == stable_sorted_data);
+        REQUIRE(equal);
     }
 }
 
