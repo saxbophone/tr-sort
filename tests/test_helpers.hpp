@@ -114,8 +114,8 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             public:
                 static std::poisson_distribution<GT> create_rnd(std::default_random_engine& engine) {
                     std::uniform_real_distribution<double> probability(
-                        std::numeric_limits<OT>::min(),
-                        std::numeric_limits<OT>::max()
+                        (double)std::numeric_limits<OT>::min(),
+                        (double)std::numeric_limits<OT>::max()
                     );
                     return std::poisson_distribution<GT>(probability(engine));
                 }
