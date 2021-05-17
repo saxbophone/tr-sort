@@ -116,12 +116,13 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             class RNDMaker<OT, GT, std::poisson_distribution> {
             public:
                 static std::poisson_distribution<GT> create_rnd(std::default_random_engine& engine) {
-                    std::cout << "std::poisson_distribution" << std::endl;
                     std::uniform_real_distribution<double> probability(
                         (double)std::numeric_limits<OT>::min(),
                         (double)std::numeric_limits<OT>::max()
                     );
-                    return std::poisson_distribution<GT>(probability(engine));
+                    double p = probability(engine);
+                    std::cout << "std::poisson_distribution(" << p << ")" << std::endl;
+                    return std::poisson_distribution<GT>(p);
                 }
             };
 
@@ -203,8 +204,11 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
                     // fill vector with lambda calling prng
                     // std::generate(data.begin(), data.end(), [&](){ return (T)dist(engine); });
                     for (auto& datum : data) {
+                        std::cout << "#";
+                        std::cout.flush();
                         datum = (T)dist(engine);
                     }
+                    std::cout << std::endl;
                     return data;
                 } else {
                     return RND<T, GenType, RandomNumberDistributions...>::generate(engine, size, chosen - 1);

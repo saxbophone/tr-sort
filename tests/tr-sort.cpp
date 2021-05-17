@@ -25,21 +25,21 @@ TEMPLATE_TEST_CASE(
     for (int i = 0; i < 1000; i++) {
         // PARAM: SIZE (100)
         std::vector<TestType> unsorted_data = prng.generate<TestType>(array_length);
-        std::cout << "unsorted_data = { ";
-        for (auto datum : unsorted_data) {
-            std::cout << datum << ", ";
-        }
-        std::cout << "};" << std::endl;
+        // std::cout << "unsorted_data = { ";
+        // for (auto datum : unsorted_data) {
+        //     std::cout << datum << ", ";
+        // }
+        // std::cout << "};" << std::endl;
         // create two copies to work-in-place
         std::vector<TestType> tr_sorted_data = unsorted_data;
         std::vector<TestType> stable_sorted_data = unsorted_data;
         // sort with tr-sort and stdlib stable_sort
         REQUIRE(tr_sort::sort<TestType>({tr_sorted_data}));
-        std::cout << "tr_sorted_data = { ";
-        for (auto datum : tr_sorted_data) {
-            std::cout << datum << ", ";
-        }
-        std::cout << "};" << std::endl;
+        // std::cout << "tr_sorted_data = { ";
+        // for (auto datum : tr_sorted_data) {
+        //     std::cout << datum << ", ";
+        // }
+        // std::cout << "};" << std::endl;
         // stable_sort returns void so no need to test return value
         std::stable_sort(stable_sorted_data.begin(), stable_sorted_data.end());
         // verify both sorted arrays are equal
