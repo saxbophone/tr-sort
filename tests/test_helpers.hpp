@@ -1,6 +1,8 @@
 #ifndef COM_SAXBOPHONE_TR_SORT_PRIVATE_TESTS_TEST_HELPERS_HPP
 #define COM_SAXBOPHONE_TR_SORT_PRIVATE_TESTS_TEST_HELPERS_HPP
 
+#include <iostream>
+
 #include <algorithm>
 #include <cfloat>
 #include <cstddef>
@@ -102,6 +104,7 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             class RNDMaker<OT, GT, std::uniform_int_distribution> {
             public:
                 static std::uniform_int_distribution<GT> create_rnd(std::default_random_engine&) {
+                    std::cout << "std::uniform_int_distribution" << std::endl;
                     return std::uniform_int_distribution<GT>(
                         std::numeric_limits<OT>::min(),
                         std::numeric_limits<OT>::max()
@@ -113,6 +116,7 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             class RNDMaker<OT, GT, std::poisson_distribution> {
             public:
                 static std::poisson_distribution<GT> create_rnd(std::default_random_engine& engine) {
+                    std::cout << "std::poisson_distribution" << std::endl;
                     std::uniform_real_distribution<double> probability(
                         (double)std::numeric_limits<OT>::min(),
                         (double)std::numeric_limits<OT>::max()
@@ -125,6 +129,7 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             class RNDMaker<OT, GT, std::discrete_distribution> {
             public:
                 static std::discrete_distribution<GT> create_rnd(std::default_random_engine& engine) {
+                    std::cout << "std::discrete_distribution" << std::endl;
                     std::uniform_real_distribution<double> probability(0.0, 1.0);
                     // build a table of weights for each possible outcome
                     std::vector<double> weights;
@@ -143,6 +148,7 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             class RNDMaker<OT, GT, std::uniform_real_distribution> {
             public:
                 static std::uniform_real_distribution<GT> create_rnd(std::default_random_engine& engine) {
+                    std::cout << "std::uniform_real_distribution" << std::endl;
                     // pick a max and min range within those exactly representable
                     std::uniform_int_distribution<int> digits_range(1, std::numeric_limits<OT>::digits);
                     GT min = -std::pow((GT)FLT_RADIX, (GT)digits_range(engine));
@@ -155,6 +161,7 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             class RNDMaker<OT, GT, std::exponential_distribution> {
             public:
                 static std::exponential_distribution<GT> create_rnd(std::default_random_engine& engine) {
+                    std::cout << "std::exponential_distribution" << std::endl;
                     std::uniform_int_distribution<int> digits_range(1, std::numeric_limits<OT>::digits);
                     return std::exponential_distribution<GT>(
                         (GT)1.0 / std::pow((GT)FLT_RADIX, (GT)digits_range(engine))
@@ -166,6 +173,7 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             class RNDMaker<OT, GT, std::gamma_distribution> {
             public:
                 static std::gamma_distribution<GT> create_rnd(std::default_random_engine& engine) {
+                    std::cout << "std::gamma_distribution" << std::endl;
                     std::uniform_int_distribution<int> digits_range(0, std::numeric_limits<OT>::digits);
                     return std::gamma_distribution<GT>(
                         std::pow((GT)FLT_RADIX, (GT)digits_range(engine)) - (GT)0.999, // not quite 0
