@@ -23,6 +23,12 @@
 #include <vector>
 
 
+/**
+ * @snippet examples.cpp Including tr-sort
+ * @snippet examples.cpp Sorting an array
+ * @snippet examples.cpp Sorting a vector
+ * @snippet examples.cpp Sorting a C array
+ */
 namespace com::saxbophone::tr_sort {
     /**
      * @brief Stable sorts the input dating using the Transposition Sort sorting
@@ -116,6 +122,31 @@ namespace com::saxbophone::tr_sort {
         }
         return true;
     }
+
+    // template <
+    //     typename T,
+    //     typename Real = long double
+    // >
+    // bool sort(std::span<T> data) {
+    //     return sort<T, std::dynamic_extent, Real>({data});
+    // }
+
+    // template <
+    //     typename T,
+    //     std::size_t size,
+    //     typename Real = long double
+    // >
+    // bool sort(std::array<T, size> data) {
+    //     return sort<T, size, Real>({data});
+    // }
+
+    // template <
+    //     typename T,
+    //     typename Real = long double
+    // >
+    // bool sort(std::vector<T> data) {
+    //     return sort<T, std::dynamic_extent, Real>({data});
+    // }
 }
 
 #endif // include guard

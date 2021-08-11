@@ -142,5 +142,5 @@ if(ENABLE_TESTS AND NOT TR_SORT_SUBPROJECT)
     enable_testing()
 endif()
 
-add_executable(main main.cpp)
-target_link_libraries(main tr-sort)
+add_executable(examples examples.cpp)
+target_link_libraries(examples tr-sort)
