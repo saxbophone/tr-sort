@@ -39,7 +39,7 @@ TEMPLATE_TEST_CASE(
 }
 
 TEMPLATE_TEST_CASE(
-    "Benchmark tr_sort::sort() by type", "[benchmark-by-type]",
+    "Benchmark tr_sort::sort() by type", "[!benchmark][benchmark-by-type]",
     std::uint8_t, std::int8_t, std::uint16_t, std::int16_t, std::uint32_t,
     std::int32_t, std::uint64_t, std::int64_t, float, double, long double
 ) {
@@ -55,7 +55,7 @@ TEMPLATE_TEST_CASE(
 }
 
 TEMPLATE_TEST_CASE(
-    "Benchmark tr_sort::sort() by size", "[benchmark-by-size]",
+    "Benchmark tr_sort::sort() by size", "[!benchmark][benchmark-by-size]",
     std::uint8_t, std::int16_t, std::int32_t, std::int64_t, float, double
 ) {
     BENCHMARK_ADVANCED("Benchmark tr_sort(10)")(Catch::Benchmark::Chronometer meter) {
