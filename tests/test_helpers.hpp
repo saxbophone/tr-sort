@@ -10,8 +10,6 @@
 #include <vector>
 
 
-using namespace com::saxbophone::tr_sort;
-
 namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
     /*
      * a special random number distribution which generates floating point

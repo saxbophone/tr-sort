@@ -17,8 +17,6 @@
 #ifndef COM_SAXBOPHONE_TR_SORT_HPP
 #define COM_SAXBOPHONE_TR_SORT_HPP
 
-#include <iostream>
-
 #include <cmath>       // ceil, nextafter, pow
 #include <cstddef>
 #include <span>
@@ -71,9 +69,6 @@ namespace com::saxbophone::tr_sort {
         T previous = data[0];
         bool already_sorted = true;
         for (auto datum : data) {
-            // if (not std::isfinite(datum)) {
-            //     continue; // skip non-finite values
-            // }
             // mean += datum;
             if (datum < min) {
                 min = datum;
@@ -133,7 +128,6 @@ namespace com::saxbophone::tr_sort {
                 pos = sorts.size() - 1;
             }
             pos += 1;
-            // std::cout << "n: " << n << " raw_pos: " << raw_pos << " pos: " << pos << std::endl;
             sorts[pos].push_back(n);
         }
         // pull data out of sorted buckets, recursively sorting each before pulling
@@ -141,12 +135,6 @@ namespace com::saxbophone::tr_sort {
         for (auto& bucket : sorts) {
             // recursively sort any sort buckets that are larger than 1
             if (bucket.size() > 1) {
-                // std::cout << "recurse({";
-                // for (auto datum : bucket) {
-                //     std::cout << datum << ", ";
-                // }
-                // std::cout << "});" << std::endl;
-                // std::cin.get();
                 sort<T, std::dynamic_extent, Real>(bucket);
             }
             for (T datum : bucket) {
