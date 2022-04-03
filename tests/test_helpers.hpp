@@ -66,6 +66,15 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             >(size);
         }
 
+        template <typename T>
+        std::vector<T> generate_uniform(std::size_t size) {
+            if constexpr (std::is_floating_point_v<T>) {
+                return this->_generate<T, T, std::uniform_real_distribution>(size);
+            } else {
+                return this->_generate<T, T, std::uniform_int_distribution>(size);
+            }
+        }
+
     private:
         // for randomly choosing one from a number of RandomNumberDistributions
         template <
