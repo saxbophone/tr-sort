@@ -111,11 +111,16 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             template <typename OT, typename GT>
             class RNDMaker<OT, GT, std::uniform_int_distribution> {
             public:
-                static std::uniform_int_distribution<GT> create_rnd(std::default_random_engine&) {
-                    return std::uniform_int_distribution<GT>(
+                static std::uniform_int_distribution<GT> create_rnd(std::default_random_engine& engine) {
+                    GT min = std::uniform_int_distribution<GT>(
                         std::numeric_limits<OT>::min(),
+                        std::numeric_limits<OT>::max() - 1
+                    )(engine);
+                    GT max = std::uniform_int_distribution<GT>(
+                        min + 1,
                         std::numeric_limits<OT>::max()
-                    );
+                    )(engine);
+                    return std::uniform_int_distribution<GT>(min, max);
                 }
             };
 
