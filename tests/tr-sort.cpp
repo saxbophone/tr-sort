@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <vector>
 
+#define CATCH_CONFIG_ENABLE_BENCHMARKING
 #include <catch2/catch.hpp>
 
 #include <tr-sort.hpp>
@@ -36,6 +37,26 @@ TEMPLATE_TEST_CASE(
         REQUIRE(equal);
     }
 }
+
+// TEST_CASE("Benchmarks", "[benchmark]") {
+// }
+
+TEMPLATE_TEST_CASE(
+    "Benchmark tr_sort::sort()", "[benchmark]",
+    std::uint8_t, std::int8_t, std::uint16_t, std::int16_t, std::uint32_t,
+    std::int32_t, std::uint64_t, std::int64_t, float, double, long double
+) {
+    BENCHMARK_ADVANCED("Benchmark tr_sort")(Catch::Benchmark::Chronometer meter) {
+        std::vector<TestType> unsorted_data = prng.generate<TestType>(1000);
+        meter.measure([&] { return tr_sort::sort<TestType>({unsorted_data}); });
+    };
+
+    BENCHMARK_ADVANCED("Benchmark std::stable_sort")(Catch::Benchmark::Chronometer meter) {
+        std::vector<TestType> unsorted_data = prng.generate<TestType>(1000);
+        meter.measure([&] { return std::stable_sort(unsorted_data.begin(), unsorted_data.end()); });
+    };
+}
+
 
 TEMPLATE_TEST_CASE(
     "tr_sort::sort() does a stable sort on input arrays containing only extreme finite values and infinities", "",
