@@ -38,11 +38,8 @@ TEMPLATE_TEST_CASE(
     }
 }
 
-// TEST_CASE("Benchmarks", "[benchmark]") {
-// }
-
 TEMPLATE_TEST_CASE(
-    "Benchmark tr_sort::sort()", "[benchmark]",
+    "Benchmark tr_sort::sort() by type", "[benchmark-by-type]",
     std::uint8_t, std::int8_t, std::uint16_t, std::int16_t, std::uint32_t,
     std::int32_t, std::uint64_t, std::int64_t, float, double, long double
 ) {
@@ -57,6 +54,64 @@ TEMPLATE_TEST_CASE(
     };
 }
 
+TEMPLATE_TEST_CASE(
+    "Benchmark tr_sort::sort() by size", "[benchmark-by-size]",
+    std::uint8_t, std::int16_t, std::int32_t, std::int64_t, float, double
+) {
+    BENCHMARK_ADVANCED("Benchmark tr_sort(10)")(Catch::Benchmark::Chronometer meter) {
+        std::vector<TestType> unsorted_data = prng.generate<TestType>(10);
+        meter.measure([&] { return tr_sort::sort<TestType>({unsorted_data}); });
+    };
+    BENCHMARK_ADVANCED("Benchmark std::stable_sort(10)")(Catch::Benchmark::Chronometer meter) {
+        std::vector<TestType> unsorted_data = prng.generate<TestType>(10);
+        meter.measure([&] { return std::stable_sort(unsorted_data.begin(), unsorted_data.end()); });
+    };
+
+    BENCHMARK_ADVANCED("Benchmark tr_sort(100)")(Catch::Benchmark::Chronometer meter) {
+        std::vector<TestType> unsorted_data = prng.generate<TestType>(100);
+        meter.measure([&] { return tr_sort::sort<TestType>({unsorted_data}); });
+    };
+    BENCHMARK_ADVANCED("Benchmark std::stable_sort(100)")(Catch::Benchmark::Chronometer meter) {
+        std::vector<TestType> unsorted_data = prng.generate<TestType>(100);
+        meter.measure([&] { return std::stable_sort(unsorted_data.begin(), unsorted_data.end()); });
+    };
+
+    BENCHMARK_ADVANCED("Benchmark tr_sort(1000)")(Catch::Benchmark::Chronometer meter) {
+        std::vector<TestType> unsorted_data = prng.generate<TestType>(1000);
+        meter.measure([&] { return tr_sort::sort<TestType>({unsorted_data}); });
+    };
+    BENCHMARK_ADVANCED("Benchmark std::stable_sort(1000)")(Catch::Benchmark::Chronometer meter) {
+        std::vector<TestType> unsorted_data = prng.generate<TestType>(1000);
+        meter.measure([&] { return std::stable_sort(unsorted_data.begin(), unsorted_data.end()); });
+    };
+
+    BENCHMARK_ADVANCED("Benchmark tr_sort(10000)")(Catch::Benchmark::Chronometer meter) {
+        std::vector<TestType> unsorted_data = prng.generate<TestType>(10000);
+        meter.measure([&] { return tr_sort::sort<TestType>({unsorted_data}); });
+    };
+    BENCHMARK_ADVANCED("Benchmark std::stable_sort(10000)")(Catch::Benchmark::Chronometer meter) {
+        std::vector<TestType> unsorted_data = prng.generate<TestType>(10000);
+        meter.measure([&] { return std::stable_sort(unsorted_data.begin(), unsorted_data.end()); });
+    };
+
+    BENCHMARK_ADVANCED("Benchmark tr_sort(100000)")(Catch::Benchmark::Chronometer meter) {
+        std::vector<TestType> unsorted_data = prng.generate<TestType>(100000);
+        meter.measure([&] { return tr_sort::sort<TestType>({unsorted_data}); });
+    };
+    BENCHMARK_ADVANCED("Benchmark std::stable_sort(100000)")(Catch::Benchmark::Chronometer meter) {
+        std::vector<TestType> unsorted_data = prng.generate<TestType>(100000);
+        meter.measure([&] { return std::stable_sort(unsorted_data.begin(), unsorted_data.end()); });
+    };
+
+    BENCHMARK_ADVANCED("Benchmark tr_sort(1000000)")(Catch::Benchmark::Chronometer meter) {
+        std::vector<TestType> unsorted_data = prng.generate<TestType>(1000000);
+        meter.measure([&] { return tr_sort::sort<TestType>({unsorted_data}); });
+    };
+    BENCHMARK_ADVANCED("Benchmark std::stable_sort(1000000)")(Catch::Benchmark::Chronometer meter) {
+        std::vector<TestType> unsorted_data = prng.generate<TestType>(1000000);
+        meter.measure([&] { return std::stable_sort(unsorted_data.begin(), unsorted_data.end()); });
+    };
+}
 
 TEMPLATE_TEST_CASE(
     "tr_sort::sort() does a stable sort on input arrays containing only extreme finite values and infinities", "",
