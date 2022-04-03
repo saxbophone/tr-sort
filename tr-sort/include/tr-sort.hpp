@@ -17,9 +17,12 @@
 #ifndef COM_SAXBOPHONE_TR_SORT_HPP
 #define COM_SAXBOPHONE_TR_SORT_HPP
 
+#include <iostream>
+
 #include <cmath>       // ceil, nextafter, pow
 #include <cstddef>
 #include <span>
+#include <type_traits>
 #include <vector>
 
 
@@ -53,8 +56,14 @@ namespace com::saxbophone::tr_sort {
         }
         // gather stats on first pass of data
         std::size_t size = data.size();
-        T min = std::numeric_limits<T>::max();
-        T max = std::numeric_limits<T>::lowest();
+        T min, max;
+        if constexpr (std::is_floating_point<T>::value) {
+            min = +std::numeric_limits<T>::infinity();
+            max = -std::numeric_limits<T>::infinity();
+        } else {
+            min = std::numeric_limits<T>::max();
+            max = std::numeric_limits<T>::lowest();
+        }
         // Real mean = 0.0;
         // Real mid = 0.0;
         // must be Real because otherwise gives out-of-range values for signed types
@@ -62,6 +71,9 @@ namespace com::saxbophone::tr_sort {
         T previous = data[0];
         bool already_sorted = true;
         for (auto datum : data) {
+            // if (not std::isfinite(datum)) {
+            //     continue; // skip non-finite values
+            // }
             // mean += datum;
             if (datum < min) {
                 min = datum;
@@ -89,17 +101,39 @@ namespace com::saxbophone::tr_sort {
             data[0] = min;
             data[data.size() - 1] = max;
         }
+        if constexpr (std::is_floating_point<T>::value) {
+            if (min == -std::numeric_limits<T>::infinity()) {
+                min = std::numeric_limits<T>::lowest();
+            }
+            if (max == +std::numeric_limits<T>::infinity()) {
+                max = std::numeric_limits<T>::max();
+            }
+        }
         // mean /= size;
         // mid = (min + max) / 2.0;
         range = (Real)max - (Real)min;
         // temporary storage for sorting -- vector of sub-vectors to store partial sorts
-        std::vector<std::vector<T>> sorts(data.size());
+        std::vector<std::vector<T>> sorts(data.size() + 2);
         for (auto n : data) {
-            // calculated sort position
-            std::size_t pos = (std::size_t)std::ceil((((Real)n - min) / range) * (size - 1));
-            if (pos > sorts.size() -1) {
-                return false; // error, sort position calculated incorrectly
+            if constexpr (std::is_floating_point<T>::value) {
+                if (n == -std::numeric_limits<T>::infinity()) {
+                    sorts[0].push_back(n);
+                    continue;
+                } else if (n == +std::numeric_limits<T>::infinity()) {
+                    sorts[sorts.size() - 1].push_back(n);
+                    continue;
+                }
             }
+            // calculated sort position
+            Real raw_pos = std::ceil((((Real)n - min) / range) * (size - 1));
+            std::size_t pos = std::isnan(raw_pos) ? 1u : (std::size_t)raw_pos;
+            if (raw_pos < 0) {
+                pos = 0;
+            } else if (raw_pos > (sorts.size() - 1)) {
+                pos = sorts.size() - 1;
+            }
+            pos += 1;
+            // std::cout << "n: " << n << " raw_pos: " << raw_pos << " pos: " << pos << std::endl;
             sorts[pos].push_back(n);
         }
         // pull data out of sorted buckets, recursively sorting each before pulling
@@ -107,6 +141,12 @@ namespace com::saxbophone::tr_sort {
         for (auto& bucket : sorts) {
             // recursively sort any sort buckets that are larger than 1
             if (bucket.size() > 1) {
+                // std::cout << "recurse({";
+                // for (auto datum : bucket) {
+                //     std::cout << datum << ", ";
+                // }
+                // std::cout << "});" << std::endl;
+                // std::cin.get();
                 sort<T, std::dynamic_extent, Real>(bucket);
             }
             for (T datum : bucket) {
