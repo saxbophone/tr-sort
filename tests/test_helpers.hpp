@@ -60,8 +60,11 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             return this->_generate<
                 T,
                 T,
-                std::uniform_int_distribution,
-                std::poisson_distribution
+                std::uniform_int_distribution
+                #ifndef _MSC_VER
+                // poisson distribution appears to be dodgy on MSVC, runs *very* slowly
+                , std::poisson_distribution
+                #endif
             >(size);
         }
 
@@ -243,7 +246,10 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             std::uint8_t,
             std::uint16_t,
             std::uniform_int_distribution,
+            #ifndef _MSC_VER
+            // poisson distribution appears to be dodgy on MSVC, runs *very* slowly
             std::poisson_distribution,
+            #endif
             std::discrete_distribution
         >(size);
     }
@@ -253,7 +259,10 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             std::int8_t,
             std::int16_t,
             std::uniform_int_distribution,
+            #ifndef _MSC_VER
+            // poisson distribution appears to be dodgy on MSVC, runs *very* slowly
             std::poisson_distribution,
+            #endif
             std::discrete_distribution
         >(size);
     }
@@ -269,7 +278,10 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             std::uint16_t,
             std::uint16_t,
             std::uniform_int_distribution,
+            #ifndef _MSC_VER
+            // poisson distribution appears to be dodgy on MSVC, runs *very* slowly
             std::poisson_distribution,
+            #endif
             std::discrete_distribution
         >(size);
     }
@@ -279,7 +291,10 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             std::int16_t,
             std::int16_t,
             std::uniform_int_distribution,
+            #ifndef _MSC_VER
+            // poisson distribution appears to be dodgy on MSVC, runs *very* slowly
             std::poisson_distribution,
+            #endif
             std::discrete_distribution
         >(size);
     }
@@ -297,6 +312,13 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             std::exponential_distribution,
             std::gamma_distribution,
             uniform_discrete_float_distribution
+            // NOTE: these distributions are commented out, not because they
+            // don't work (they do), but because we don't yet have any
+            // specialisations for them that allow us to vary their input
+            // parameters, which means they won't produce very interesting or
+            // "varied" outputs, unlike the distributions above, for which we
+            // do vary the generation parameters
+
             // std::weibull_distribution,
             // std::extreme_value_distribution,
             // std::normal_distribution,
@@ -318,6 +340,13 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             std::exponential_distribution,
             std::gamma_distribution,
             uniform_discrete_float_distribution
+            // NOTE: these distributions are commented out, not because they
+            // don't work (they do), but because we don't yet have any
+            // specialisations for them that allow us to vary their input
+            // parameters, which means they won't produce very interesting or
+            // "varied" outputs, unlike the distributions above, for which we
+            // do vary the generation parameters
+
             // std::weibull_distribution,
             // std::extreme_value_distribution,
             // std::normal_distribution,
@@ -340,6 +369,13 @@ namespace com::saxbophone::tr_sort::PRIVATE::test_helpers {
             std::exponential_distribution,
             std::gamma_distribution,
             uniform_discrete_float_distribution
+            // NOTE: these distributions are commented out, not because they
+            // don't work (they do), but because we don't yet have any
+            // specialisations for them that allow us to vary their input
+            // parameters, which means they won't produce very interesting or
+            // "varied" outputs, unlike the distributions above, for which we
+            // do vary the generation parameters
+
             // std::weibull_distribution,
             // std::extreme_value_distribution,
             // std::normal_distribution,
