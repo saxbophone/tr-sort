@@ -31,7 +31,7 @@ namespace com::saxbophone::tr_sort {
      * @tparam T data typed stored in the iterable to sort
      * @tparam Extent size of iterable (leave default for dynamic size)
      * @tparam Real data type used by the algorithm for real numbers
-     * @param data iterable to sort
+     * @param[out] data iterable to sort
      * @returns `true` when the sort was successful
      * @returns `false` when the sort was unsuccessful
      * @todo Add template param or function param for conversion lambda function
