@@ -27,7 +27,7 @@ TEMPLATE_TEST_CASE(
         std::vector<TestType> tr_sorted_data = unsorted_data;
         std::vector<TestType> stable_sorted_data = unsorted_data;
         // sort with tr-sort and stdlib stable_sort
-        REQUIRE(tr_sort::sort<TestType>({tr_sorted_data}));
+        tr_sort::sort<TestType>({tr_sorted_data});
         // stable_sort returns void so no need to test return value
         std::stable_sort(stable_sorted_data.begin(), stable_sorted_data.end());
         // verify both sorted arrays are equal
@@ -64,7 +64,7 @@ TEMPLATE_TEST_CASE(
         std::vector<TestType> tr_sorted_data = unsorted_data;
         std::vector<TestType> stable_sorted_data = unsorted_data;
         // sort with tr-sort and stdlib stable_sort
-        REQUIRE(tr_sort::sort<TestType>({tr_sorted_data}));
+        tr_sort::sort<TestType>({tr_sorted_data});
         // stable_sort returns void so no need to test return value
         std::stable_sort(stable_sorted_data.begin(), stable_sorted_data.end());
         // results should be the same
