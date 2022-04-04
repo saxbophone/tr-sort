@@ -32,8 +32,6 @@ namespace com::saxbophone::tr_sort {
      * @tparam Extent size of iterable (leave default for dynamic size)
      * @tparam Real data type used by the algorithm for real numbers
      * @param[out] data iterable to sort
-     * @returns `true` when the sort was successful
-     * @returns `false` when the sort was unsuccessful
      * @todo Add template param or function param for conversion lambda function
      * to be used for casting objects of type T to some other Scalar type. This
      * may or may not need an additional template type param to determine which
@@ -47,10 +45,10 @@ namespace com::saxbophone::tr_sort {
         std::size_t Extent = std::dynamic_extent,
         typename Real = long double
     >
-    bool sort(std::span<T, Extent> data) {
+    void sort(std::span<T, Extent> data) {
         // don't sort data of length {0..1}
         if (data.size() < 2) {
-            return true;
+            return;
         }
         // gather stats on first pass of data
         std::size_t size = data.size();
@@ -89,7 +87,7 @@ namespace com::saxbophone::tr_sort {
         }
         // short cut for already sorted
         if (already_sorted) {
-            return true;
+            return;
         }
         // short cut for size 2
         if (data.size() == 2) {
@@ -142,7 +140,7 @@ namespace com::saxbophone::tr_sort {
                 i++;
             }
         }
-        return true;
+        return;
     }
 }
 
