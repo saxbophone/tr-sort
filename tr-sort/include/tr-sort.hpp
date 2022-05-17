@@ -27,9 +27,6 @@ namespace com::saxbophone::tr_sort {
     /**
      * @brief Stable sorts the input dating using the Transposition Sort sorting
      * algorithm.
-     * @tparam T data typed stored in the iterable to sort
-     * @tparam Extent size of iterable (leave default for dynamic size)
-     * @tparam Real data type used by the algorithm for real numbers
      * @param data iterable to sort
      * @returns `true` when the sort was successful
      * @returns `false` when the sort was unsuccessful
@@ -116,6 +113,18 @@ namespace com::saxbophone::tr_sort {
         }
         return true;
     }
+
+    extern template bool sort<std::uint8_t>(std::span<std::uint8_t> data);
+    extern template bool sort<std::int8_t>(std::span<std::int8_t> data);
+    extern template bool sort<std::uint16_t>(std::span<std::uint16_t> data);
+    extern template bool sort<std::int16_t>(std::span<std::int16_t> data);
+    extern template bool sort<std::uint32_t>(std::span<std::uint32_t> data);
+    extern template bool sort<std::int32_t>(std::span<std::int32_t> data);
+    extern template bool sort<std::uint64_t>(std::span<std::uint64_t> data);
+    extern template bool sort<std::int64_t>(std::span<std::int64_t> data);
+    extern template bool sort<float>(std::span<float> data);
+    extern template bool sort<double>(std::span<double> data);
+    extern template bool sort<long double>(std::span<long double> data);
 }
 
 #endif // include guard
