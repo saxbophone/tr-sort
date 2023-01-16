@@ -93,6 +93,7 @@ namespace com::saxbophone::tr_sort {
         if (data.size() == 2) {
             data[0] = min;
             data[data.size() - 1] = max;
+            return;
         }
         if constexpr (std::is_floating_point<T>::value) {
             if (min == -std::numeric_limits<T>::infinity()) {
