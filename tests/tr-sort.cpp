@@ -71,7 +71,7 @@ TEMPLATE_TEST_CASE(
         -std::numeric_limits<TestType>::infinity(),
         +std::numeric_limits<TestType>::infinity()
     };
-    std::size_t array_size = 10;
+    std::size_t array_size = GENERATE(2u, 10u);
     std::random_device rd;
     std::default_random_engine engine(rd());
     std::uniform_int_distribution<std::size_t> picker(0, 3);
