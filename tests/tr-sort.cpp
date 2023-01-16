@@ -38,6 +38,28 @@ TEMPLATE_TEST_CASE(
 }
 
 TEMPLATE_TEST_CASE(
+    "tr_sort::sort() does a stable sort on input arrays of size 2", "",
+    std::uint8_t, std::int8_t, std::uint16_t, std::int16_t, std::uint32_t,
+    std::int32_t, std::uint64_t, std::int64_t, float, double, long double
+) {
+    for (int i = 0; i < 1000; i++) {
+        // PARAM: SIZE (100)
+        std::vector<TestType> unsorted_data = prng.generate<TestType>(2);
+        // create two copies to work-in-place
+        std::vector<TestType> tr_sorted_data = unsorted_data;
+        std::vector<TestType> stable_sorted_data = unsorted_data;
+        // sort with tr-sort and stdlib stable_sort
+        tr_sort::sort<TestType>({tr_sorted_data});
+        // stable_sort returns void so no need to test return value
+        std::stable_sort(stable_sorted_data.begin(), stable_sorted_data.end());
+        // verify both sorted arrays are equal
+        bool equal = tr_sorted_data == stable_sorted_data;
+        // REQUIRE(tr_sorted_data == stable_sorted_data);
+        REQUIRE(equal);
+    }
+}
+
+TEMPLATE_TEST_CASE(
     "tr_sort::sort() does a stable sort on input arrays containing only extreme finite values and infinities", "",
     float, double, long double
 ) {
